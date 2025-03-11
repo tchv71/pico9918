@@ -350,7 +350,7 @@ inline static void vrEmuTms9918SetAddressWrite(VrEmuTms9918* tms9918, uint16_t a
 
 
 /*
- * Return a colur byte consisting of foreground and background colors
+ * Return a color byte consisting of foreground and background colors
  */
 inline static uint8_t vrEmuTms9918FgBgColor(vrEmuTms9918Color fg, vrEmuTms9918Color bg)
 {
