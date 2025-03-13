@@ -19,8 +19,8 @@
 
 #include "splash.h"
 
-#include "impl/vrEmuTms9918Priv.h"
-#include "vrEmuTms9918Util.h"
+#include "../submodules/vrEmuTms9918/src/impl/vrEmuTms9918Priv.h"
+#include "../submodules/vrEmuTms9918/src/vrEmuTms9918Util.h"
 
 #include "pico/stdlib.h"
 #include "pico/multicore.h"

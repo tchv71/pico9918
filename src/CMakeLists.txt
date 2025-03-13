@@ -5,9 +5,9 @@ cmake_minimum_required(VERSION 3.13)
 
 set(PICO9918_VERSION   "0.4.3")
 set(PICO9918_PCB_MAJOR_VER 0)
-set(PICO9918_PCB_MINOR_VER 4)
+set(PICO9918_PCB_MINOR_VER 3)
 
-set(PICO9918_SCANLINES 1)
+set(PICO9918_SCANLINES 0)
 
 # SCART RGBs options
 set(PICO9918_SCART_RGBS 0)  # 1 for RGBs, 0 for VGA
@@ -51,7 +51,7 @@ set(PROGRAM pico9918${PICO9918_BINARY_SUFFIX})
 
 add_executable(${PROGRAM} )
 
-target_sources(${PROGRAM} PRIVATE main.c palette.c clocks.pio.h tms9918.pio.h)
+target_sources(${PROGRAM} PRIVATE main.c palette.c clocks.pio.h tms9918.pio.h ../submodules/vrEmuTms9918/src/vrEmuTms9918.c ../submodules/vrEmuTms9918/src/vrEmuTms9918Util.c)
 
 pico_set_program_name(${PROGRAM} "pico9918")
 pico_set_program_version(${PROGRAM} ${PICO9918_VERSION})
@@ -69,7 +69,7 @@ pico_add_extra_outputs(${PROGRAM})
 pico_enable_stdio_usb(${PROGRAM} 0)
 pico_enable_stdio_uart(${PROGRAM} 0)
 
-pico_set_binary_type(${PROGRAM} copy_to_ram)
+#pico_set_binary_type(${PROGRAM} copy_to_ram)
 
 add_definitions(-DPICO9918_VERSION="${PICO9918_VERSION}")
 add_definitions(-DPICO9918_PCB_MAJOR_VER=${PICO9918_PCB_MAJOR_VER})
@@ -87,7 +87,8 @@ target_link_libraries(${PROGRAM} PUBLIC
         pico_multicore
         hardware_pio        
         pico9918-vga
-        vrEmuTms9918)
+        #vrEmuTms9918
+        )
 
 add_subdirectory(pio-utils)
 add_subdirectory(vga)
