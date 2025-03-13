@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.13)
 
 set(PICO9918_VERSION   "0.4.4")
 set(PICO9918_PCB_MAJOR_VER 0)
-set(PICO9918_PCB_MINOR_VER 4)
+set(PICO9918_PCB_MINOR_VER 3)
 
 set(PICO9918_SCANLINES 0)
 
@@ -69,7 +69,7 @@ pico_add_extra_outputs(${PROGRAM})
 pico_enable_stdio_usb(${PROGRAM} 0)
 pico_enable_stdio_uart(${PROGRAM} 0)
 
-pico_set_binary_type(${PROGRAM} copy_to_ram)
+#pico_set_binary_type(${PROGRAM} copy_to_ram)
 
 add_definitions(-DPICO9918_VERSION="${PICO9918_VERSION}")
 add_definitions(-DPICO9918_PCB_MAJOR_VER=${PICO9918_PCB_MAJOR_VER})
