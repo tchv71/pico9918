@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.13)
 
 # compile-time options
 
-set(PICO9918_MAJOR_VER 1)
-set(PICO9918_MINOR_VER 2)
+set(PICO9918_MAJOR_VER 0)
+set(PICO9918_MINOR_VER 3)
 
 # SCART RGBs options
 set(PICO9918_SCART_RGBS 0)  # 1 for RGBs, 0 for VGA
