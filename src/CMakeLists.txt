@@ -53,7 +53,9 @@ set(PROGRAM pico9918${PICO9918_BINARY_SUFFIX})
 
 add_executable(${PROGRAM} )
 
-target_sources(${PROGRAM} PRIVATE main.c config.c diag.c flash.c gpio.c splash.c temperature.c clocks.pio.h tms9918.pio.h)
+target_sources(${PROGRAM} PRIVATE main.c config.c diag.c flash.c gpio.c splash.c temperature.c clocks.pio.h tms9918.pio.h
+ #../submodules/vrEmuTms9918/src/vrEmuTms9918.c ../submodules/vrEmuTms9918/src/vrEmuTms9918Util.c
+ )
 
 pico_set_program_name(${PROGRAM} "pico9918")
 pico_set_program_version(${PROGRAM} ${PICO9918_VERSION})
@@ -99,7 +101,10 @@ target_link_libraries(${PROGRAM} PUBLIC
         hardware_flash
         pico9918-vga
         pico9918-gpu
-        vrEmuTms9918)
+        #hardware_irq
+        vrEmuTms9918
+        )
+
 
 pico_add_extra_outputs(${PROGRAM})
 

@@ -19,4 +19,5 @@ target_include_directories (${LIBRARY} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${LIBRARY} PRIVATE
         pico_stdlib
         hardware_flash
-        vrEmuTms9918)        
+        #vrEmuTms9918
+        )        

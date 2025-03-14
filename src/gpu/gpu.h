@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "impl/vrEmuTms9918Priv.h"
+#include "../../submodules/vrEmuTms9918/src/impl/vrEmuTms9918Priv.h"
 
 /* initialize the TMS9900 GPU */
 void gpuInit();

@@ -9,7 +9,7 @@
  *
  */
 
-#include "impl/vrEmuTms9918Priv.h"
+ #include "../submodules/vrEmuTms9918/src/impl/vrEmuTms9918Priv.h"
 
 #include "gpio.h"
 #include "vga.h"
@@ -39,9 +39,9 @@ static bool hwVersionDetected = false;
  */
 static Pico9918HardwareVersion detectHardwareVersion()
 {
-  Pico9918HardwareVersion version = HWVer_1_x;
+  Pico9918HardwareVersion version = HWVer_0_3;
 
-#if PICO_RP2040
+#if 0// PICO_RP2040
   // check if RESET pin is being driven externally (on v0.4+, it is, on v0.3 it isn't since it's CPUCL)
   gpio_set_dir_masked(GPIO_RESET_MASK, 0 << GPIO_RESET);  // reset input
   gpio_pull_up(GPIO_RESET);

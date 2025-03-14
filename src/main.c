@@ -14,8 +14,8 @@
 
 #include "clocks.pio.h"
 
-#include "impl/vrEmuTms9918Priv.h"
-#include "vrEmuTms9918Util.h"
+#include "../submodules/vrEmuTms9918/src/impl/vrEmuTms9918Priv.h"
+#include "../submodules/vrEmuTms9918/src/vrEmuTms9918Util.h"
 
 #include "display.h"
 #include "diag.h"

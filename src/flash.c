@@ -9,7 +9,7 @@
  *
  */
 
-#include "impl/vrEmuTms9918Priv.h"
+ #include "../submodules/vrEmuTms9918/src/impl/vrEmuTms9918Priv.h"
 
 #include "hardware/flash.h"
 

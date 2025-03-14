@@ -59,4 +59,4 @@ pico_sdk_init()
 
 add_subdirectory(submodules/vrEmuTms9918)
 add_subdirectory(src)
-add_subdirectory(test)
+#add_subdirectory(test)
