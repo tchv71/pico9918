@@ -47,11 +47,12 @@ if (${PICO9918_DIAG})
   set(PICO9918_BINARY_SUFFIX ${PICO9918_BINARY_SUFFIX}-diag)
 endif()
 
-set(PROGRAM pico9918${PICO9918_BINARY_SUFFIX})
+#set(PROGRAM pico9918${PICO9918_BINARY_SUFFIX})
+set(PROGRAM pico9918)
 
 add_executable(${PROGRAM} )
 
-target_sources(${PROGRAM} PRIVATE main.c palette.c clocks.pio.h tms9918.pio.h)
+target_sources(${PROGRAM} PRIVATE main.c palette.c clocks.pio.h tms9918.pio.h ../submodules/vrEmuTms9918/src/vrEmuTms9918.c ../submodules/vrEmuTms9918/src/vrEmuTms9918Util.c)
 
 pico_set_program_name(${PROGRAM} "pico9918")
 pico_set_program_version(${PROGRAM} ${PICO9918_VERSION})
@@ -87,7 +88,8 @@ target_link_libraries(${PROGRAM} PUBLIC
         pico_multicore
         hardware_pio        
         pico9918-vga
-        vrEmuTms9918)
+        #vrEmuTms9918
+        )
 
 add_subdirectory(pio-utils)
 add_subdirectory(vga)
