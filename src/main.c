@@ -440,6 +440,7 @@ void proc1Entry()
  */
 int main(void)
 {
+  vreg_set_voltage(VREG_VOLTAGE_1_25);
   /* currently, VGA hard-coded to 640x480@60Hz. We want a high clock frequency
    * that comes close to being divisible by 25.175MHz. 252.0 is close... enough :)
    * I do have code which sets the best clock baased on the chosen VGA mode,
