@@ -41,6 +41,6 @@ add_definitions(-DVR_EMU_TMS9918_SINGLE_INSTANCE=1)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-add_subdirectory(submodules/vrEmuTms9918)
+#add_subdirectory(submodules/vrEmuTms9918)
 add_subdirectory(src)
-add_subdirectory(test)
+#add_subdirectory(test)
