@@ -53,6 +53,7 @@ readData:
 readStatus:  
   out null, 8       ; skip data bits
   out pins, 8       ; output the status byte
+  mov isr, x        ; make this status value available
 endPart:
   in pins, 3        ; push CSR, CSW and MODE back through fifo
   push              ; push ^^^ back to cpu to process
@@ -72,7 +73,7 @@ endPart:
 .program tmsWrite
 .define public CSW_PIN 27
 
-  wait 0 gpio CSW_PIN; [12]   ; wait for CSW to go active (low)
-  wait 1 gpio CSW_PIN; [12]   ; wait for CSW high (inactive)
+  wait 0 gpio CSW_PIN [12]   ; wait for CSW to go active (low)
+  wait 1 gpio CSW_PIN [12]   ; wait for CSW high (inactive)
   in pins, 16                ; grab the data CD0-7 and auto-push
 .wrap
