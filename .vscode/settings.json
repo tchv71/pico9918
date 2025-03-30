@@ -43,7 +43,8 @@
         "binary_info.h": "c",
         "divider.h": "c",
         "tms9918.pio.h": "c",
-        "breakout.h": "c"
+        "breakout.h": "c",
+        "vremutms9918.h": "c"
     },
-    "cortex-debug.variableUseNaturalFormat": false
+    "cortex-debug.variableUseNaturalFormat": true
 }
