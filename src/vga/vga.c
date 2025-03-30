@@ -19,6 +19,8 @@
 #include "hardware/dma.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
+#include "../../submodules/vrEmuTms9918/src/vrEmuTms9918.h"
+#include "../../submodules/vrEmuTms9918/src/impl/vrEmuTms9918Priv.h"
 
  // compile options
 #define VGA_CRT_EFFECT PICO9918_SCANLINES
@@ -333,6 +335,11 @@ static void __isr __time_critical_func(dmaIrqHandler)(void)
 #if VGA_HARDCODED_640
     uint32_t pxLine = currentDisplayLine >> 1;
     uint32_t pxLineRpt = currentDisplayLine & 0x01;
+    if (false && tms9918->mode == TMS_MODE_TEXT80_8)
+    {
+      pxLine = currentDisplayLine;
+      pxLineRpt = 0;
+    }
 #else
     divmod_result_t pxLineVal = divmod_u32u32(currentDisplayLine, vgaParams.params.vPixelScale);
     uint32_t pxLine = to_quotient_u32(pxLineVal);
@@ -357,12 +364,13 @@ static void __isr __time_critical_func(dmaIrqHandler)(void)
     // need a new line every X display lines
     if ((pxLineRpt == 0))
     {
-      uint32_t requestLine = pxLine + 1;
-      if (requestLine >= VIRTUAL_PIXELS_Y) requestLine -= VIRTUAL_PIXELS_Y;
+      uint32_t requestLine = pxLine + (tms9918->mode != TMS_MODE_TEXT80_8 ? 1 : 0);
+      if (tms9918->mode != TMS_MODE_TEXT80_8 && requestLine >= VIRTUAL_PIXELS_Y)
+        requestLine -= VIRTUAL_PIXELS_Y;
 
       multicore_fifo_push_timeout_us(requestLine, 0);
 
-      if (requestLine == VIRTUAL_PIXELS_Y - 1)
+      if (requestLine == (tms9918->mode == TMS_MODE_TEXT80_8 ? 2*VIRTUAL_PIXELS_Y : VIRTUAL_PIXELS_Y) - 1)
       {
         multicore_fifo_push_timeout_us(END_OF_FRAME_MSG, 0);
       }
