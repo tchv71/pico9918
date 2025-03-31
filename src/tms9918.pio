@@ -73,7 +73,7 @@ endPart:
 .program tmsWrite
 .define public CSW_PIN 27
 
-  wait 0 gpio CSW_PIN [12]   ; wait for CSW to go active (low)
-  wait 1 gpio CSW_PIN [12]   ; wait for CSW high (inactive)
+  wait 0 gpio CSW_PIN; [12]   ; wait for CSW to go active (low)
+  wait 1 gpio CSW_PIN; [12]   ; wait for CSW high (inactive)
   in pins, 16                ; grab the data CD0-7 and auto-push
 .wrap
