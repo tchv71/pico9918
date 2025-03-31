@@ -298,6 +298,7 @@ static void __isr __time_critical_func(dmaIrqHandler)(void)
 {
   static int currentTimingLine = -1;
   static int currentDisplayLine = -1;
+  const bool bModeText80_8 = tms9918->mode == TMS_MODE_TEXT80_8;
 
   if (dma_hw->ints0 & syncDmaChanMask)
   {
@@ -335,7 +336,7 @@ static void __isr __time_critical_func(dmaIrqHandler)(void)
 #if VGA_HARDCODED_640
     uint32_t pxLine = currentDisplayLine >> 1;
     uint32_t pxLineRpt = currentDisplayLine & 0x01;
-    if (tms9918->mode == TMS_MODE_TEXT80_8)
+    if (bModeText80_8)
     {
       pxLine = currentDisplayLine;
       pxLineRpt = 0;
@@ -363,15 +364,16 @@ static void __isr __time_critical_func(dmaIrqHandler)(void)
     dma_channel_set_read_addr(rgbDmaChan, currentBuffer, true);
 
     // need a new line every X display lines
-    if ((pxLineRpt == 0))
+    if (pxLineRpt == 0)
     {
-      uint32_t requestLine = pxLine + 1;//(tms9918->mode != TMS_MODE_TEXT80_8 ? 1 : 0);
-      if (tms9918->mode != TMS_MODE_TEXT80_8 && requestLine >= VIRTUAL_PIXELS_Y)
-        requestLine -= VIRTUAL_PIXELS_Y;
+      uint32_t requestLine = pxLine + 1;
+      const uint32_t maxLines = (!bModeText80_8 ? 1 : 2) * VIRTUAL_PIXELS_Y;
+      if (requestLine >= maxLines)
+        requestLine -= maxLines;
 
       multicore_fifo_push_timeout_us(requestLine, 0);
 
-      if (requestLine == (tms9918->mode == TMS_MODE_TEXT80_8 ? 2*VIRTUAL_PIXELS_Y : VIRTUAL_PIXELS_Y) - 1)
+      if (requestLine == maxLines - 1)
       {
         multicore_fifo_push_timeout_us(END_OF_FRAME_MSG, 0);
       }
@@ -414,15 +416,13 @@ void __time_critical_func(vgaLoop)()
 
 
   uint32_t frameNumber = 0;
-  uint32_t lineNumber = 0;
   while (1)
   {
     uint32_t message = multicore_fifo_pop_blocking();
  
     if (message == END_OF_FRAME_MSG)
     {
-      lineNumber = 0;
-      if (vgaParams.endOfFrameFn)
+       if (vgaParams.endOfFrameFn)
       {
         vgaParams.endOfFrameFn(frameNumber);
         ++frameNumber;
@@ -437,7 +437,6 @@ void __time_critical_func(vgaLoop)()
     }
     else
     {
-      //message = ++lineNumber;
       // get the next scanline pixels
       vgaParams.scanlineFn(message & 0xfff, &vgaParams.params, rgbDataBuffer[message & 0x01]);
     }
