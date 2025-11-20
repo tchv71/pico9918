@@ -221,7 +221,7 @@ static inline void disableTmsPioInterrupts()
 static void __time_critical_func(tmsScanline)(uint16_t y1, VgaParams* params, uint16_t* pixels)
 {
   const bool bModeText80_8 = tms9918->mode == TMS_MODE_TEXT80_8;
-  const uint32_t vBorder = bModeText80_8 ? ((480 - 384) / 2) : ((VIRTUAL_PIXELS_Y - TMS9918_PIXELS_Y) / 2);
+  const uint32_t vBorder = bModeText80_8 ? 0 /* ((480 - 384) / 2) */ : ((VIRTUAL_PIXELS_Y - TMS9918_PIXELS_Y) / 2);
   const uint32_t hBorder = (bModeText80_8 ? 0 : (VIRTUAL_PIXELS_X - TMS9918_PIXELS_X * 2)) / 2;
 
   static int frameCount = 0;
@@ -231,12 +231,13 @@ static void __time_critical_func(tmsScanline)(uint16_t y1, VgaParams* params, ui
   uint16_t bg = tms9918PaletteBGR12[vrEmuTms9918RegValue(TMS_REG_FG_BG_COLOR) & 0x0f];
 
   /*** top and bottom borders ***/
-  if (y < vBorder || y >= vBorder + (bModeText80_8 ? 384 : TMS9918_PIXELS_Y))
+  if (y < vBorder || y >= vBorder + (bModeText80_8 ? TMS9918_80_PIXELS_Y/* 384 */ : TMS9918_PIXELS_Y))
   {
-    for (int x = 0; x < VIRTUAL_PIXELS_X; ++x)
-    {
-      pixels[x] = bg;
-    }
+    if (vBorder != 0)
+      for (int x = 0; x < VIRTUAL_PIXELS_X; ++x)
+      {
+        pixels[x] = bg;
+      }
 
     /* source: C:/Users/troy/OneDrive/Documents/projects/pico9918/src/res/splash.png
      * size  : 172px x 10px
@@ -255,7 +256,7 @@ static void __time_critical_func(tmsScanline)(uint16_t y1, VgaParams* params, ui
         }
       }
 
-      if (y < (bModeText80_8 ? 480 : VIRTUAL_PIXELS_Y) - 1)
+      if (vBorder != 0 && y < (bModeText80_8 ? TMS9918_80_PIXELS_Y : VIRTUAL_PIXELS_Y) - 1)
       {
         y -= vBorder + (bModeText80_8 ? 2 : 1) * TMS9918_PIXELS_Y + logoOffset;
         if (y < splashHeight && y>=0)
@@ -277,7 +278,8 @@ static void __time_critical_func(tmsScanline)(uint16_t y1, VgaParams* params, ui
         }
       }
     }
-    return;
+    if (vBorder != 0)
+      return;
   }
 
   y -= vBorder;
@@ -291,7 +293,7 @@ static void __time_critical_func(tmsScanline)(uint16_t y1, VgaParams* params, ui
   uint8_t tempStatus = vrEmuTms9918ScanLine(y, bModeText80_8 ? (uint8_t*)pixels : tmsScanlineBuffer);
 #endif
   /*** interrupt signal? ***/
-  if (y == (bModeText80_8 ? 384 : TMS9918_PIXELS_Y) - 1)
+  if (y == (bModeText80_8 ? TMS9918_80_PIXELS_Y/* 384 */ : TMS9918_PIXELS_Y) - 1)
   {
     tempStatus |= STATUS_INT;
   }
