@@ -135,7 +135,7 @@ const uint tmsReadSm = 1;
 /*
  * update the value send to the read PIO
  */
-inline static void updateTmsReadAhead()
+__force_inline static void updateTmsReadAhead()
 {
   uint32_t readAhead = 0xff;              // pin direction
   readAhead |= nextValue << 8;
