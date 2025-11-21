@@ -146,10 +146,10 @@ __force_inline static void updateTmsReadAhead()
 /*
  * handle interrupts from the TMS9918<->CPU interface
  */
-void  __not_in_flash_func(pio_irq_handler)()
+void  __not_in_flash_func(pio_irq_handler_write)()
 {
 
-  if ((TMS_PIO->fstat & (1u << (PIO_FSTAT_RXEMPTY_LSB + tmsWriteSm))) == 0) // write?
+  //if ((TMS_PIO->fstat & (1u << (PIO_FSTAT_RXEMPTY_LSB + tmsWriteSm))) == 0) // write?
   {
     uint32_t writeVal = TMS_PIO->rxf[tmsWriteSm];
 
@@ -167,7 +167,11 @@ void  __not_in_flash_func(pio_irq_handler)()
     nextValue = vrEmuTms9918ReadDataNoIncImpl();
     updateTmsReadAhead();
   }
-  else if ((TMS_PIO->fstat & (1u << (PIO_FSTAT_RXEMPTY_LSB + tmsReadSm))) == 0) // read?
+}
+
+void  __not_in_flash_func(pio_irq_handler_read)()
+{
+  //else if ((TMS_PIO->fstat & (1u << (PIO_FSTAT_RXEMPTY_LSB + tmsReadSm))) == 0) // read?
   {
     uint32_t readVal = TMS_PIO->rxf[tmsReadSm];
 
@@ -390,8 +394,8 @@ uint initClock(uint gpio, float freqHz)
  */
 void tmsPioInit()
 {
-  irq_set_exclusive_handler(TMS_IRQ, pio_irq_handler);
-  irq_set_enabled(TMS_IRQ, true);
+  irq_set_exclusive_handler(PIO1_IRQ_0, pio_irq_handler_write);
+  irq_set_enabled(PIO1_IRQ_0, true);
 
   uint tmsWriteProgram = pio_add_program(TMS_PIO, &tmsWrite_program);
 
@@ -401,6 +405,7 @@ void tmsPioInit()
   sm_config_set_clkdiv(&writeConfig, 1.0f);
 
   pio_sm_init(TMS_PIO, tmsWriteSm, tmsWriteProgram, &writeConfig);
+
   pio_sm_set_enabled(TMS_PIO, tmsWriteSm, true);
   pio_set_irq0_source_enabled(TMS_PIO, pis_sm0_rx_fifo_not_empty, true);
 
@@ -421,7 +426,9 @@ void tmsPioInit()
 
   pio_sm_init(TMS_PIO, tmsReadSm, tmsReadProgram, &readConfig);
   pio_sm_set_enabled(TMS_PIO, tmsReadSm, true);
-  pio_set_irq0_source_enabled(TMS_PIO, pis_sm1_rx_fifo_not_empty, true);
+  irq_set_exclusive_handler(PIO1_IRQ_1, pio_irq_handler_read);
+  irq_set_enabled(PIO1_IRQ_1, true);
+  pio_set_irq1_source_enabled(TMS_PIO, pis_sm1_rx_fifo_not_empty, true);
 
   pio_sm_put(TMS_PIO, tmsReadSm, 0x000000ff);
 }
@@ -454,13 +461,14 @@ void proc1Entry()
  */
 int main(void)
 {
-  vreg_set_voltage(VREG_VOLTAGE_1_25);
+  vreg_set_voltage(VREG_VOLTAGE_1_30);
   /* currently, VGA hard-coded to 640x480@60Hz. We want a high clock frequency
    * that comes close to being divisible by 25.175MHz. 252.0 is close... enough :)
    * I do have code which sets the best clock baased on the chosen VGA mode,
    * but this'll do for now. */
 
-  set_sys_clock_pll(PICO_CLOCK_PLL, PICO_CLOCK_PLL_DIV1, PICO_CLOCK_PLL_DIV2);   // 252000
+  //set_sys_clock_pll(PICO_CLOCK_PLL, PICO_CLOCK_PLL_DIV1, PICO_CLOCK_PLL_DIV2);   // 252000
+  set_sys_clock_khz(300000, false);
 
   /* we need one of these. it's the main guy */
   vrEmuTms9918Init();
