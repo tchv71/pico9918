@@ -71,6 +71,7 @@
 #define GPIO_CSW tmsWrite_CSW_PIN // defined in tms9918.pio
 #define GPIO_MODE 28
 #define GPIO_INT 22
+#define GPIO_nWAIT 23
 
 #if PCB_MAJOR_VERSION != 0
 #error "Time traveller?"
@@ -94,6 +95,7 @@
 #define GPIO_CSW_MASK (0x01 << GPIO_CSW)
 #define GPIO_MODE_MASK (0x01 << GPIO_MODE)
 #define GPIO_INT_MASK (0x01 << GPIO_INT)
+#define GPIO_nWAIT_MASK (0x01 << GPIO_nWAIT)
 
 #define TMS_CRYSTAL_FREQ_HZ 10738635.0f
 
@@ -416,10 +418,15 @@ void tmsPioInit()
     pio_gpio_init(TMS_PIO, GPIO_CD7 + i);
   }
 
+  pio_gpio_init(TMS_PIO, GPIO_nWAIT);
+  uint32_t mask = GPIO_nWAIT_MASK;
+  pio_sm_set_pins_with_mask(TMS_PIO, tmsReadSm, mask, mask);
+  pio_sm_set_pindirs_with_mask(TMS_PIO, tmsReadSm, mask, mask);
   pio_sm_config readConfig = tmsRead_program_get_default_config(tmsReadProgram);
   sm_config_set_in_pins(&readConfig, GPIO_CSR);
   sm_config_set_jmp_pin(&readConfig, GPIO_MODE);
   sm_config_set_out_pins(&readConfig, GPIO_CD7, 8);
+  sm_config_set_set_pins(&readConfig, GPIO_nWAIT, 1);
   sm_config_set_in_shift(&readConfig, false, false, 32); // L shift
   sm_config_set_out_shift(&readConfig, true, false, 32); // R shift
   sm_config_set_clkdiv(&readConfig, 1.0f);

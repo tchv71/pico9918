@@ -36,6 +36,7 @@
   wait 1 gpio CSR_PIN ; wait for CSR to go high (inactive) 
   mov osr, null       ; change CD0-7 pindirs to inputs
   out pindirs, 8
+  set pins, 1
 
 pullLoop:
   pull noblock      ; continuously empty the tx fifo
@@ -55,6 +56,7 @@ readStatus:
   out pins, 8       ; output the status byte
   ;mov isr, x        ; make this status value available
 endPart:
+  set pins, 0       ; reset wait trigger
   in pins, 3        ; push CSR, CSW and MODE back through fifo
   push              ; push ^^^ back to cpu to process
 .wrap
